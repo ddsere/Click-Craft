@@ -11,6 +11,8 @@ import CreateShowcaseScreen from './screens/CreateShowcaseScreen.tsx'
 import LoginScreen from './screens/LoginScreen.tsx'
 import RegisterScreen from './screens/RegisterScreen.tsx'
 import HomeScreen from './screens/HomeScreen.tsx'
+import CartScreen from './screens/cartScreen.tsx'
+import ShippingScreen from './screens/ShippingScreen.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +22,8 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterScreen />} />
       <Route path="/create-showcase" element={<CreateShowcaseScreen />} />
       <Route path="/showcase/:slug" element={<ShowcaseViewScreen />} />
+      <Route path="/cart" element={<CartScreen />} />
+      <Route path="/shipping" element={<ShippingScreen />} /> 
     </Route>
   )
 )

@@ -4,58 +4,71 @@ import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
 import { useNavigate } from "react-router-dom";
 
+interface ProductItem {
+  name: string;
+  price: string;
+  desc: string;
+  image: string;
+}
+
 const CreateShowcaseScreen: React.FC = () => {
   const [slug, setSlug] = useState("");
   const [title, setTitle] = useState("");
   const [theme, setTheme] = useState("bg-slate-900 text-white");
-  const [image, setImage] = useState("");
-  const [uploading, setUploading] = useState(false);
 
-  const [itemName, setItemName] = useState("");
-  const [itemPrice, setItemPrice] = useState("");
-  const [itemDesc, setItemDesc] = useState("");
+  const [items, setItems] = useState<ProductItem[]>([
+    { name: "", price: "", desc: "", image: "" },
+  ]);
 
-  const [loadingAI, setLoadingAI] = useState(false);
+  const [loadingAI, setLoadingAI] = useState<number | null>(null);
+  const [uploading, setUploading] = useState<number | null>(null);
   const [message, setMessage] = useState("");
 
   const { userInfo } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
 
-  const generateAIDesc = async () => {
-    if (!itemName) {
-      setMessage("Please provide a Product Name.");
+  const addProductField = () => {
+    setItems([...items, { name: "", price: "", desc: "", image: "" }]);
+  };
+
+  const handleItemChange = (index: number, field: keyof ProductItem, value: string) => {
+    const newItems = [...items];
+    newItems[index][field] = value;
+    setItems(newItems);
+  };
+
+  const generateAIDesc = async (index: number) => {
+    if (!items[index].name) {
+      setMessage("Please provide a Product Name for this item.");
       return;
     }
     try {
-      setLoadingAI(true);
-      const res = await axios.post("/api/ai/generate-desc", {
-        productName: itemName,
-      });
-      setItemDesc(res.data.description);
-      setMessage("You've successfuly generated an AI Description!");
+      setLoadingAI(index);
+      const res = await axios.post("/api/ai/generate-desc", { productName: items[index].name });
+      handleItemChange(index, "desc", res.data.description);
+      setMessage("AI Description generated!");
     } catch (error) {
       setMessage("Error connecting to the AI.");
     } finally {
-      setLoadingAI(false);
+      setLoadingAI(null);
     }
   };
 
-  const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
-      setUploading(true);
-
+      setUploading(index);
       try {
         const config = { headers: { "Content-Type": "multipart/form-data" } };
         const { data } = await axios.post("/api/upload", formData, config);
-        setImage(data.image);
-        setMessage("Image Uploaded Successfully!");
+        handleItemChange(index, "image", data.image);
+        setMessage("Image Uploaded!");
       } catch (error) {
         setMessage("Image Upload Failed!");
       } finally {
-        setUploading(false);
+        setUploading(null);
       }
     }
   };
@@ -63,151 +76,52 @@ const CreateShowcaseScreen: React.FC = () => {
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const showcaseData = {
-        slug,
-        title,
-        theme,
-        items: [
-          { id: 1, name: itemName, price: itemPrice, desc: itemDesc, image },
-        ],
-      };
-
+      const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+      const showcaseData = { slug, title, theme, items };
       await axios.post("/api/showcases", showcaseData, config);
       alert("Successfuly created Showcase!");
       navigate("/");
     } catch (err: any) {
-      setMessage(
-        err.response?.data?.message || "Failed to save the Showcase.",
-      );
+      setMessage(err.response?.data?.message || "Failed to save the Showcase.");
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">
-        Create New Showcase 🚀
-      </h2>
-
-      {message && (
-        <div className="bg-indigo-100 text-indigo-700 p-3 mb-4 rounded text-center font-medium">
-          {message}
-        </div>
-      )}
+    <div className="max-w-4xl mx-auto mt-10 bg-white p-8 rounded-lg shadow-md">
+      <h2 className="text-3xl font-bold mb-6 text-center text-indigo-600">Create New Showcase 🚀</h2>
+      {message && <div className="bg-indigo-100 text-indigo-700 p-3 mb-4 rounded text-center font-medium">{message}</div>}
 
       <form onSubmit={submitHandler} className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700 font-medium">
-              Showcase Title
-            </label>
-            <input
-              type="text"
-              className="w-full mt-1 p-2 border rounded-md"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              placeholder="Ex: Pro Gaming Gear"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-medium">
-              URL Slug (No spaces)
-            </label>
-            <input
-              type="text"
-              className="w-full mt-1 p-2 border rounded-md"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase())}
-              required
-              placeholder="Ex: pro-gaming-gear"
-            />
-          </div>
+          <input type="text" className="w-full p-2 border rounded-md" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Showcase Title" />
+          <input type="text" className="w-full p-2 border rounded-md" value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase())} required placeholder="URL Slug" />
         </div>
 
-        <hr className="my-4" />
-        <h3 className="text-xl font-semibold text-gray-800">
-          Add Product Item
-        </h3>
+        <hr />
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-gray-700 font-medium">
-              Product Name
-            </label>
-            <input
-              type="text"
-              className="w-full mt-1 p-2 border rounded-md"
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-              required
-              placeholder="Ex: Mechanical Keyboard"
-            />
+        {items.map((item, index) => (
+          <div key={index} className="p-4 border border-indigo-100 rounded-lg bg-gray-50 space-y-4">
+            <h4 className="font-bold text-indigo-600">Item {index + 1}</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <input type="text" className="w-full p-2 border rounded-md" value={item.name} onChange={(e) => handleItemChange(index, "name", e.target.value)} required placeholder="Product Name" />
+              <input type="text" className="w-full p-2 border rounded-md" value={item.price} onChange={(e) => handleItemChange(index, "price", e.target.value)} required placeholder="Price" />
+            </div>
+            <input type="file" onChange={(e) => uploadFileHandler(e, index)} className="w-full p-2 border rounded-md" />
+            {uploading === index && <p className="text-blue-500">Uploading...</p>}
+            <div className="flex space-x-2">
+              <textarea className="w-full p-2 border rounded-md h-20" value={item.desc} onChange={(e) => handleItemChange(index, "desc", e.target.value)} required placeholder="Description..."></textarea>
+              <button type="button" onClick={() => generateAIDesc(index)} disabled={loadingAI === index} className="bg-purple-600 text-white px-4 rounded-md">
+                {loadingAI === index ? "..." : "Gen AI"}
+              </button>
+            </div>
           </div>
-          <div>
-            <label className="block text-gray-700 font-medium">Price</label>
-            <input
-              type="text"
-              className="w-full mt-1 p-2 border rounded-md"
-              value={itemPrice}
-              onChange={(e) => setItemPrice(e.target.value)}
-              required
-              placeholder="Ex: Rs. 15,000"
-            />
-          </div>
-        </div>
+        ))}
 
-        <div>
-          <label className="block text-gray-700 font-medium">
-            Product Image
-          </label>
-          <input
-            type="text"
-            className="w-full mt-1 p-2 border rounded-md mb-2 bg-gray-100"
-            value={image}
-            readOnly
-            placeholder="Image URL will appear here"
-          />
-          <input
-            type="file"
-            onChange={uploadFileHandler}
-            className="w-full p-2 border rounded-md"
-          />
-          {uploading && <p className="text-blue-500 mt-1">Uploading...</p>}
-        </div>
+        <button type="button" onClick={addProductField} className="w-full border-2 border-dashed border-indigo-200 p-2 text-indigo-600 font-bold hover:bg-indigo-50">
+          + Add Another Product
+        </button>
 
-        <div>
-          <label className="block text-gray-700 font-medium mb-1">
-            Product Description (AI Powered ✨)
-          </label>
-          <div className="flex space-x-2">
-            <textarea
-              className="w-full p-2 border rounded-md h-24"
-              value={itemDesc}
-              onChange={(e) => setItemDesc(e.target.value)}
-              required
-              placeholder="Write here or let AI generate for you..."
-            ></textarea>
-            <button
-              type="button"
-              onClick={generateAIDesc}
-              disabled={loadingAI}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 rounded-md font-semibold transition"
-            >
-              {loadingAI ? "Generating..." : "Gen AI"}
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white p-3 rounded-md hover:bg-indigo-700 transition font-bold text-lg"
-        >
+        <button type="submit" className="w-full bg-indigo-600 text-white p-3 rounded-md hover:bg-indigo-700 font-bold">
           Publish Showcase
         </button>
       </form>

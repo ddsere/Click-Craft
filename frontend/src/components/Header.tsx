@@ -3,15 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { type RootState } from '../store/store';
 import { logout } from '../store/slices/authSlice';
+import { clearCartItems } from '../store/slices/cartSlice';
 
 const Header: React.FC = () => {
     const { userInfo } = useSelector((state: RootState) => state.auth);
+    const { cartItems } = useSelector((state: RootState) => state.cart);
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const logoutHandler = () => {
         dispatch(logout());
+        dispatch(clearCartItems());
+        
         navigate('/login');
     };
 
@@ -25,11 +29,20 @@ const Header: React.FC = () => {
                 <div className="flex space-x-6 items-center">
                     {userInfo ? (
                         <>
+                            <Link to="/cart" className="text-gray-300 hover:text-white font-medium flex items-center mr-6 transition relative">
+                                <span className="text-xl mr-1">🛒</span> Cart
+                                {cartItems.length > 0 && (
+                                    <span className="absolute -top-2 -right-3 bg-indigo-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+                                        {cartItems.reduce((a, c) => a + c.qty, 0)}
+                                    </span>
+                                )}
+                            </Link>
+
                             <Link to="/create-showcase" className="text-gray-300 hover:text-white font-medium mr-4 transition">
                                 + Create Showcase
                             </Link>
 
-                            <span className="text-gray-300 font-medium">
+                            <span className="text-gray-300 font-medium ml-4">
                                 Hi, <span className="text-white">{userInfo.name}</span>
                             </span>
                             <button 
@@ -41,6 +54,14 @@ const Header: React.FC = () => {
                         </>
                     ) : (
                         <>
+                            <Link to="/cart" className="text-gray-300 hover:text-white font-medium flex items-center mr-6 transition relative">
+                                <span className="text-xl mr-1">🛒</span> Cart
+                                {cartItems.length > 0 && (
+                                    <span className="absolute -top-2 -right-3 bg-indigo-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+                                        {cartItems.reduce((a, c) => a + c.qty, 0)}
+                                    </span>
+                                )}
+                            </Link>
                             <Link to="/login" className="text-gray-300 hover:text-white font-medium transition">
                                 Login
                             </Link>
