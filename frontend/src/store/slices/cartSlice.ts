@@ -6,6 +6,7 @@ export interface CartItem {
     price: string;
     image?: string;
     qty: number;
+    sellerId: string;
 }
 
 export interface ShippingAddress {
@@ -18,6 +19,7 @@ export interface ShippingAddress {
 interface CartState {
     cartItems: CartItem[];
     shippingAddress: ShippingAddress;
+    paymentMethod: string;
 }
 
 interface CartState {
@@ -30,7 +32,8 @@ const initialState: CartState = {
         : [],
     shippingAddress: localStorage.getItem('shippingAddress')
         ? JSON.parse(localStorage.getItem('shippingAddress') as string)
-        : { address: '', city: '', postalCode: '', country: '' }, // මුලින්ම හිස්
+        : { address: '', city: '', postalCode: '', country: '' },
+    paymentMethod: 'PayPal',
 };
 
 const cartSlice = createSlice({
@@ -67,8 +70,13 @@ const cartSlice = createSlice({
             state.cartItems = [];
             localStorage.removeItem('cartItems');
         },
+
+        savePaymentMethod: (state, action: PayloadAction<string>) => {
+            state.paymentMethod = action.payload;
+            localStorage.setItem('paymentMethod', JSON.stringify(state.paymentMethod));
+        },
     },
 });
 
-export const { addToCart, removeFromCart, saveShippingAddress, clearCartItems } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress, clearCartItems, savePaymentMethod } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -5,19 +5,33 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password?: string;
+    role: 'customer' | 'seller' | 'admin'; 
+    businessName?: string;                 
+    phoneNumber?: string;                  
     matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
-const userSchema: Schema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        
+        role: { 
+            type: String, 
+            enum: ['customer', 'seller', 'admin'], 
+            default: 'customer' 
+        },
+        
+        businessName: { type: String },
+        phoneNumber: { type: String },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+    }
 );
 
-userSchema.pre('save', async function (this: any) {
+userSchema.pre('save', async function (this: any, next) {
     if (!this.isModified('password')) {
         return; 
     }

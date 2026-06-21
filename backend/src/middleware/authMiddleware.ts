@@ -27,3 +27,19 @@ export const protect = async (req: AuthRequest, res: Response, next: NextFunctio
         res.status(401).json({ message: "Not authorized, no token" });
     }
 };
+
+export const admin = (req: any, res: any, next: any) => {
+    if (req.user && req.user.role === 'admin') {
+        next(); 
+    } else {
+        res.status(401).json({ message: 'Not authorized as an admin' });
+    }
+};
+
+export const seller = (req: any, res: any, next: any) => {
+    if (req.user && (req.user.role === 'seller' || req.user.role === 'admin')) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized as a seller' });
+    }
+};

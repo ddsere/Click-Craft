@@ -8,8 +8,6 @@ const generateToken = (id: string) => {
     });
 };
 
-// @desc    User Registration
-// @route   POST /api/auth/register
 export const registerUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, email, password } = req.body;
@@ -26,6 +24,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role, 
                 token: generateToken(user.id),
             });
         } else {
@@ -36,8 +35,6 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
     }
 };
 
-// @desc    User Login
-// @route   POST /api/auth/login
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password } = req.body;
@@ -49,6 +46,8 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role, 
+                businessName: user.businessName, 
                 token: generateToken(user.id),
             });
         } else {

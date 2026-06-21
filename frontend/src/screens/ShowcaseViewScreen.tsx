@@ -15,7 +15,12 @@ interface ProductItem {
 interface ShowcaseData {
     title: string;
     theme: string;
-    user: { name: string };
+    user: { 
+        _id: string;          
+        name: string; 
+        businessName?: string;
+        email?: string;
+    };
     items: ProductItem[];
 }
 
@@ -28,15 +33,18 @@ const ShowcaseViewScreen: React.FC = () => {
     const [error, setError] = useState('');
 
     const addToCartHandler = (item: any) => {
-        dispatch(addToCart({
-            _id: item._id,
-            name: item.name,
-            price: item.price,
-            image: item.image,
-            qty: 1
-        }));
-        
-        navigate('/cart');
+        if (showcase && showcase.user) {
+            dispatch(addToCart({
+                _id: item._id,
+                name: item.name,
+                price: item.price,
+                image: item.image,
+                qty: 1,
+                sellerId: showcase.user._id 
+            }));
+            
+            navigate('/cart');
+        }
     };
 
     useEffect(() => {
@@ -66,7 +74,9 @@ const ShowcaseViewScreen: React.FC = () => {
                         {showcase.title}
                     </h1>
                     <p className="text-lg opacity-80">
-                        Curated by <span className="font-semibold text-indigo-400">{showcase.user.name}</span>
+                        Curated by <span className="font-semibold text-indigo-400">
+                            {showcase.user.businessName || showcase.user.name}
+                        </span>
                     </p>
                 </div>
 

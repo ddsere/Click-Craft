@@ -13,6 +13,12 @@ import RegisterScreen from './screens/RegisterScreen.tsx'
 import HomeScreen from './screens/HomeScreen.tsx'
 import CartScreen from './screens/cartScreen.tsx'
 import ShippingScreen from './screens/ShippingScreen.tsx';
+import PaymentScreen from './screens/PaymentScreen.tsx';
+import PlaceOrderScreen from './screens/PlaceOrderScreen.tsx';
+import OrderScreen from './screens/OrderScreen';  
+import ProfileScreen from './screens/ProfileScreen.tsx';
+import BecomeSellerScreen from './screens/BecomeSellerScreen.tsx';
+import SellerDashboardScreen from './screens/SellerDashboardScreen.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +30,12 @@ const router = createBrowserRouter(
       <Route path="/showcase/:slug" element={<ShowcaseViewScreen />} />
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/shipping" element={<ShippingScreen />} /> 
+      <Route path="/payment" element={<PaymentScreen />} />
+      <Route path="/placeorder" element={<PlaceOrderScreen />} />
+      <Route path="/order/:id" element={<OrderScreen />} />
+      <Route path="/profile" element={<ProfileScreen />} />
+      <Route path="/become-seller" element={<BecomeSellerScreen />} />
+      <Route path="/seller-dashboard" element={<SellerDashboardScreen />} />
     </Route>
   )
 )

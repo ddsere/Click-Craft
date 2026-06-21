@@ -28,7 +28,7 @@ export const createShowcase = async (req: AuthRequest, res: Response): Promise<a
 
 export const getShowcaseBySlug = async (req: AuthRequest, res: Response): Promise<any> => {
     try {
-        const showcase = await Showcase.findOne({ slug: req.params.slug }).populate('user', 'name');
+        const showcase = await Showcase.findOne({ slug: req.params.slug }).populate('user', 'name businessName email');
         
         if (!showcase) {
             return res.status(404).json({ message: "Showcase not found" });
