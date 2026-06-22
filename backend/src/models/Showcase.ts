@@ -1,10 +1,12 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IShowcaseItem {
-    id: number;
+    id?: number;
     name: string;
     price: string;
     desc: string;
+    image?: string;   
+    category: string; 
 }
 
 export interface IShowcase extends Document {
@@ -19,7 +21,8 @@ const itemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     price: { type: String, required: true },
     desc: { type: String, required: true },
-    image: { type: String }
+    image: { type: String },
+    category: { type: String, required: true, default: 'Electronics & Tech' }
 });
 
 const showcaseSchema: Schema = new mongoose.Schema(

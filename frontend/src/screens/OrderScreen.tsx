@@ -30,6 +30,19 @@ const OrderScreen: React.FC = () => {
         fetchOrder();
     }, [orderId, userInfo]);
 
+    const deliverHandler = async () => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            };
+            await axios.put(`/api/orders/${order._id}/deliver`, {}, config);
+            
+            window.location.reload(); 
+        } catch (err: any) {
+            alert(err.response?.data?.message || 'Failed to update order');
+        }
+    };
+
     if (loading) return <div className="text-center mt-20 text-2xl font-bold">Loading Order Details... ⏳</div>;
     if (error) return <div className="text-center mt-20 text-red-600 text-xl">Error: {error}</div>;
 
@@ -51,10 +64,24 @@ const OrderScreen: React.FC = () => {
                             {order.shippingAddress.address}, {order.shippingAddress.city}, {' '}
                             {order.shippingAddress.postalCode}, {order.shippingAddress.country}
                         </p>
+                        
                         {order.isDelivered ? (
-                            <div className="bg-green-100 text-green-800 p-3 rounded-lg font-semibold">Delivered on {order.deliveredAt.substring(0, 10)}</div>
+                            <div className="bg-green-100 text-green-800 p-3 rounded-lg font-semibold">
+                                Delivered on {order.deliveredAt.substring(0, 10)}
+                            </div>
                         ) : (
-                            <div className="bg-red-100 text-red-800 p-3 rounded-lg font-semibold">Not Delivered Yet</div>
+                            <div className="bg-red-100 text-red-800 p-4 rounded-lg font-semibold flex justify-between items-center">
+                                <span>Not Delivered Yet</span>
+                                
+                                {(userInfo?.role === 'seller' || userInfo?.role === 'admin') && (
+                                    <button 
+                                        onClick={deliverHandler} 
+                                        className="bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700 transition shadow-md"
+                                    >
+                                        Mark as Delivered ✓
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
 

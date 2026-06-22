@@ -9,7 +9,6 @@ router.post('/', protect, async (req: any, res: any) => {
         const {
             orderItems,
             shippingAddress,
-            paymentMethod,
             itemsPrice,
             shippingPrice,
             totalPrice,
@@ -25,10 +24,13 @@ router.post('/', protect, async (req: any, res: any) => {
                 seller: sellerId,   
                 orderItems,
                 shippingAddress,
-                paymentMethod,
+                paymentMethod: 'Credit/Debit Card', 
                 itemsPrice,
                 shippingPrice,
                 totalPrice,
+                
+                isPaid: true,
+                paidAt: new Date(),
             });
 
             const createdOrder = await order.save();

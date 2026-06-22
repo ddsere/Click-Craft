@@ -3,21 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { savePaymentMethod } from '../store/slices/cartSlice';
-import CheckoutSteps from '../components/CheckoutSteps';
 
 const PaymentScreen: React.FC = () => {
+    const [paymentMethod] = useState('Credit/Debit Card');
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const cart = useSelector((state: RootState) => state.cart);
-    const { shippingAddress, paymentMethod: defaultPaymentMethod } = cart;
+    const { shippingAddress } = cart;
 
     useEffect(() => {
-        if (!shippingAddress.address) {
+        if (!shippingAddress || !shippingAddress.address) {
             navigate('/shipping');
         }
     }, [shippingAddress, navigate]);
-
-    const [paymentMethod, setPaymentMethod] = useState(defaultPaymentMethod || 'PayPal');
-    const dispatch = useDispatch();
 
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,53 +26,41 @@ const PaymentScreen: React.FC = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-2xl shadow-xl">
-            <CheckoutSteps step1 step2 step3 />
-
-            <h1 className="text-4xl font-extrabold mb-8 text-center text-slate-800">
-                Payment Method 💳
-            </h1>
+        <div className="max-w-xl mx-auto mt-16 p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+            <div className="text-center mb-8">
+                <span className="text-5xl">🔒</span>
+                <h1 className="text-3xl font-extrabold text-slate-800 mt-4">Payment Method</h1>
+                <p className="text-gray-500 mt-2">All transactions are secure and encrypted.</p>
+            </div>
 
             <form onSubmit={submitHandler} className="space-y-6">
-                <div className="flex flex-col space-y-4">
-                    <label className="text-lg font-semibold text-gray-700 mb-2">Select Method</label>
+                <div>
+                    <label className="block text-gray-700 font-bold mb-4">Select Payment Option</label>
                     
-                    <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-gray-200 cursor-pointer hover:bg-indigo-50 transition">
-                        <input
-                            type="radio"
-                            className="w-5 h-5 text-indigo-600 focus:ring-indigo-500"
-                            id="PayPal"
-                            name="paymentMethod"
-                            value="PayPal"
-                            checked={paymentMethod === 'PayPal'}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
+                    <div className="bg-indigo-50 border-2 border-indigo-500 p-5 rounded-xl flex items-center shadow-sm cursor-pointer transition transform hover:-translate-y-1">
+                        <input 
+                            type="radio" 
+                            id="card" 
+                            name="paymentMethod" 
+                            value="Credit/Debit Card" 
+                            checked 
+                            readOnly
+                            className="w-6 h-6 text-indigo-600 focus:ring-indigo-500 border-gray-300"
                         />
-                        <label htmlFor="PayPal" className="ml-3 text-lg font-medium text-gray-800 cursor-pointer flex-grow">
-                            PayPal or Credit Card
-                        </label>
-                    </div>
-
-                    <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-gray-200 cursor-pointer hover:bg-indigo-50 transition">
-                        <input
-                            type="radio"
-                            className="w-5 h-5 text-indigo-600 focus:ring-indigo-500"
-                            id="COD"
-                            name="paymentMethod"
-                            value="Cash On Delivery"
-                            checked={paymentMethod === 'Cash On Delivery'}
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                        />
-                        <label htmlFor="COD" className="ml-3 text-lg font-medium text-gray-800 cursor-pointer flex-grow">
-                            Cash On Delivery (COD)
+                        <label htmlFor="card" className="ml-4 text-lg font-bold text-indigo-900 flex items-center w-full cursor-pointer">
+                            💳 Credit / Debit Card
+                            <span className="ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm shadow-sm flex items-center gap-1">
+                                <span>✓</span> Secure
+                            </span>
                         </label>
                     </div>
                 </div>
 
                 <button 
                     type="submit" 
-                    className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-1 text-lg mt-8"
+                    className="w-full bg-gradient-to-r from-slate-800 to-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:from-black hover:to-black transition transform hover:-translate-y-1 text-lg flex justify-center items-center gap-2 mt-8"
                 >
-                    Continue to Place Order
+                    Continue to Review Order &rarr;
                 </button>
             </form>
         </div>

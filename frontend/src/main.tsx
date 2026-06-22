@@ -19,6 +19,7 @@ import OrderScreen from './screens/OrderScreen';
 import ProfileScreen from './screens/ProfileScreen.tsx';
 import BecomeSellerScreen from './screens/BecomeSellerScreen.tsx';
 import SellerDashboardScreen from './screens/SellerDashboardScreen.tsx';
+import EditShowcaseScreen from './screens/EditShowcaseScreen.tsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       <Route path="/profile" element={<ProfileScreen />} />
       <Route path="/become-seller" element={<BecomeSellerScreen />} />
       <Route path="/seller-dashboard" element={<SellerDashboardScreen />} />
+      <Route path="/edit-showcase/:id" element={<EditShowcaseScreen />} />
     </Route>
   )
 )
