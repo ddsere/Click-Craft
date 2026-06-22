@@ -36,165 +36,92 @@ const ProfileScreen: React.FC = () => {
   }, [userInfo, navigate]);
 
   return (
-    <div className="max-w-7xl mx-auto mt-10 p-6">
-      <div className="flex flex-col md:flex-row gap-10">
-        <div className="md:w-1/4">
-          <h2 className="text-3xl font-bold mb-6 text-slate-800 border-b pb-2">
-            User Profile
-          </h2>
-          <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-            <div className="mb-4">
-              <label className="block text-gray-600 font-semibold mb-1">
-                Name
-              </label>
-              <p className="text-xl font-bold text-indigo-700">
-                {userInfo?.name}
-              </p>
-            </div>
-            <div>
-              <label className="block text-gray-600 font-semibold mb-1">
-                Email Address
-              </label>
-              <p className="text-lg text-slate-800">{userInfo?.email}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <label className="block text-gray-600 font-semibold mb-1">
-            Account Type
-          </label>
-          <span
-            className={`px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wider ${userInfo?.role === "admin" ? "bg-red-100 text-red-700" : userInfo?.role === "seller" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"}`}
-          >
-            {userInfo?.role || "Customer"}
-          </span>
-        </div>
-
-        {userInfo?.role === "customer" && (
-          <div className="mt-8 bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-            <h3 className="font-bold text-indigo-900 mb-2">
-              Want to sell your own products?
-            </h3>
-            <Link
-              to="/become-seller"
-              className="block text-center bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
-            >
-              Become a Seller
-            </Link>
-          </div>
-        )}
-
-        {(userInfo?.role === "seller" || userInfo?.role === "admin") && (
-          <div className="mt-8 bg-purple-50 p-4 rounded-xl border border-purple-100">
-            <h3 className="font-bold text-purple-900 mb-2">
-              Manage Your Store
-            </h3>
-            <Link
-              to="/seller-dashboard"
-              className="block text-center bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition shadow"
-            >
-              Go to Seller Dashboard 📊
-            </Link>
-          </div>
-        )}
-
-        <div className="md:w-3/4">
-          <h2 className="text-3xl font-bold mb-6 text-slate-800 border-b pb-2">
-            My Orders
-          </h2>
-
-          {loading ? (
-            <div className="text-xl font-bold">Loading Orders... ⏳</div>
-          ) : error ? (
-            <div className="bg-red-100 text-red-700 p-4 rounded-lg">
-              {error}
-            </div>
-          ) : orders.length === 0 ? (
-            <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-lg">
-              You have no orders yet.{" "}
-              <Link to="/" className="font-bold underline">
-                Go Shopping!
-              </Link>
-            </div>
-          ) : (
-            <div className="bg-white shadow-md rounded-2xl overflow-hidden border border-gray-100">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-800 text-white">
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        ID
-                      </th>
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        Total
-                      </th>
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        Paid
-                      </th>
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        Delivered
-                      </th>
-                      <th className="p-4 font-semibold text-sm uppercase tracking-wider">
-                        Details
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {orders.map((order) => (
-                      <tr
-                        key={order._id}
-                        className="hover:bg-gray-50 transition"
-                      >
-                        <td className="p-4 text-sm text-gray-700 font-medium">
-                          {order._id.substring(0, 8)}...
-                        </td>
-                        <td className="p-4 text-sm text-gray-700">
-                          {order.createdAt.substring(0, 10)}
-                        </td>
-                        <td className="p-4 text-sm font-bold text-indigo-600">
-                          Rs. {order.totalPrice.toLocaleString()}
-                        </td>
-                        <td className="p-4 text-sm">
-                          {order.isPaid ? (
-                            <span className="text-green-600 font-bold">
-                              {order.paidAt.substring(0, 10)}
+        <div className="max-w-7xl mx-auto mt-10 p-6">
+            <div className="flex flex-col lg:flex-row gap-8">
+                
+                <div className="lg:w-1/3 xl:w-1/4 space-y-6">
+                    {/* Profile Card */}
+                    <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
+                        <div className="flex flex-col items-center mb-6">
+                            <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-4xl mb-4">
+                                👤
+                            </div>
+                            <h2 className="text-2xl font-extrabold text-slate-800">{userInfo?.name}</h2>
+                            <p className="text-gray-500">{userInfo?.email}</p>
+                            
+                            <span className={`mt-4 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
+                                userInfo?.role === "admin" ? "bg-red-100 text-red-700" : 
+                                userInfo?.role === "seller" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
+                            }`}>
+                                {userInfo?.role || "Customer"}
                             </span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✕</span>
-                          )}
-                        </td>
-                        <td className="p-4 text-sm">
-                          {order.isDelivered ? (
-                            <span className="text-green-600 font-bold">
-                              {order.deliveredAt.substring(0, 10)}
-                            </span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✕</span>
-                          )}
-                        </td>
-                        <td className="p-4 text-sm">
-                          <Link
-                            to={`/order/${order._id}`}
-                            className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md font-semibold hover:bg-indigo-200 transition"
-                          >
-                            View
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+
+                        <div className="space-y-4 pt-6 border-t border-gray-100">
+                            {userInfo?.role === "customer" && (
+                                <Link to="/become-seller" className="flex items-center justify-center bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition">
+                                    🚀 Become a Seller
+                                </Link>
+                            )}
+                            {(userInfo?.role === "seller" || userInfo?.role === "admin") && (
+                                <Link to="/seller-dashboard" className="flex items-center justify-center bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition">
+                                    📊 Seller Dashboard
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:w-2/3 xl:w-3/4">
+                    <h2 className="text-3xl font-extrabold mb-6 text-slate-800">My Orders</h2>
+                    
+                    {loading ? (
+                        <div className="text-center py-20 text-xl font-bold text-gray-500">Loading Orders... ⏳</div>
+                    ) : orders.length === 0 ? (
+                        <div className="bg-white border-2 border-dashed border-gray-200 p-12 rounded-3xl text-center">
+                            <p className="text-xl text-gray-400 mb-4">No orders placed yet.</p>
+                            <Link to="/" className="text-indigo-600 font-bold hover:underline">Start Shopping →</Link>
+                        </div>
+                    ) : (
+                        <div className="bg-white shadow-xl rounded-3xl overflow-hidden border border-gray-100">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className="bg-slate-50">
+                                        <tr>
+                                            <th className="p-5 font-bold text-slate-600">ID</th>
+                                            <th className="p-5 font-bold text-slate-600">Date</th>
+                                            <th className="p-5 font-bold text-slate-600">Total</th>
+                                            <th className="p-5 font-bold text-slate-600">Paid</th>
+                                            <th className="p-5 font-bold text-slate-600">Status</th>
+                                            <th className="p-5 font-bold text-slate-600 text-center">View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {orders.map((order) => (
+                                            <tr key={order._id} className="hover:bg-slate-50 transition">
+                                                <td className="p-5 font-mono text-sm text-gray-500">#{order._id.substring(0, 8)}</td>
+                                                <td className="p-5 text-gray-700">{order.createdAt.substring(0, 10)}</td>
+                                                <td className="p-5 font-bold text-indigo-600">Rs. {order.totalPrice.toLocaleString()}</td>
+                                                <td className="p-5">
+                                                    {order.isPaid ? <span className="text-green-600 font-bold text-sm">✅ Paid</span> : <span className="text-red-400 font-bold text-sm">✕ Pending</span>}
+                                                </td>
+                                                <td className="p-5">
+                                                    {order.isDelivered ? <span className="text-green-600 font-bold text-sm">🚚 Delivered</span> : <span className="text-amber-500 font-bold text-sm">⏳ Processing</span>}
+                                                </td>
+                                                <td className="p-5 text-center">
+                                                    <Link to={`/order/${order._id}`} className="text-indigo-600 font-bold hover:underline">Details</Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ProfileScreen;

@@ -27,10 +27,7 @@ router.post('/', protect, async (req: any, res: any) => {
                 paymentMethod: 'Credit/Debit Card', 
                 itemsPrice,
                 shippingPrice,
-                totalPrice,
-                
-                isPaid: true,
-                paidAt: new Date(),
+                totalPrice
             });
 
             const createdOrder = await order.save();
@@ -103,6 +100,32 @@ router.put('/:id/deliver', protect, seller, async (req: any, res: any) => {
         }
     } catch (error: any) {
         res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+
+router.put('/:id/pay', protect, async (req: any, res: any) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            order.isPaid = true;
+            order.paidAt = new Date();
+            
+            order.paymentResult = {
+                id: req.body.id,
+                status: req.body.status,
+                update_time: req.body.update_time,
+                email_address: req.body.email_address,
+            };
+
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
     }
 });
 

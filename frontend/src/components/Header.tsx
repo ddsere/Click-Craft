@@ -41,12 +41,15 @@ const Header: React.FC = () => {
                 )}
               </Link>
 
-              <Link
-                to="/create-showcase"
-                className="text-gray-300 hover:text-white font-medium mr-4 transition"
-              >
-                + Create Showcase
-              </Link>
+              {userInfo &&
+                (userInfo.role === "seller" || userInfo.role === "admin") && (
+                  <Link
+                    to="/create-showcase"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 transition"
+                  >
+                    + Create Showcase
+                  </Link>
+                )}
 
               <Link
                 to="/profile"

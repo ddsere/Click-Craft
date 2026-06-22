@@ -35,8 +35,8 @@ const EditShowcaseScreen: React.FC = () => {
       };
 
       const { data } = await axios.post(
-        "/api/ai/generate",
-        { name: productName },
+        "/api/ai/generate-desc",
+        { productName },
         config,
       );
 

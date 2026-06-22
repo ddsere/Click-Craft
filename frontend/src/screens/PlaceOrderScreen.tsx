@@ -24,9 +24,15 @@ const PlaceOrderScreen: React.FC = () => {
     }
   }, [cart.shippingAddress, cart.paymentMethod, navigate]);
 
+  const parsePrice = (priceVal: any) => {
+    if (!priceVal) return 0;
+    const cleaned = String(priceVal).replace(/[^0-9.]/g, "");
+    const num = Number(cleaned);
+    return isNaN(num) ? 0 : num;
+  };
+
   const itemsPrice = cart.cartItems.reduce((acc, item) => {
-    const priceNum = Number(item.price.replace(/[^0-9.-]+/g, ""));
-    return acc + priceNum * item.qty;
+    return acc + parsePrice(item.price) * item.qty;
   }, 0);
 
   const shippingPrice = itemsPrice > 50000 ? 0 : 500;
@@ -134,13 +140,9 @@ const PlaceOrderScreen: React.FC = () => {
                       </Link>
                     </div>
                     <div className="text-lg font-medium text-gray-700">
-                      {item.qty} x {item.price} ={" "}
+                      {item.qty} x Rs. {parsePrice(item.price).toLocaleString()} ={" "}
                       <span className="font-bold text-slate-900">
-                        Rs.{" "}
-                        {(
-                          Number(item.price.replace(/[^0-9.-]+/g, "")) *
-                          item.qty
-                        ).toLocaleString()}
+                        Rs. {(parsePrice(item.price) * item.qty).toLocaleString()}
                       </span>
                     </div>
                   </div>

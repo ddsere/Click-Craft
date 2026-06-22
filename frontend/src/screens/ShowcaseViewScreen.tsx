@@ -27,7 +27,7 @@ interface ShowcaseData {
 const ShowcaseViewScreen: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const [showcase, setShowcase] = useState<ShowcaseData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -43,7 +43,7 @@ const ShowcaseViewScreen: React.FC = () => {
                 sellerId: showcase.user._id 
             }));
             
-            navigate('/cart');
+            //navigate('/cart');
         }
     };
 
@@ -95,7 +95,7 @@ const ShowcaseViewScreen: React.FC = () => {
                                     <div className="flex justify-between items-start mb-4">
                                         <h2 className="text-2xl font-bold text-white">{item.name}</h2>
                                         <span className="bg-indigo-600 text-white px-4 py-1 rounded-full font-bold text-lg shadow-md whitespace-nowrap ml-4">
-                                            {item.price}
+                                            Rs. {item.price}
                                         </span>
                                     </div>
                                     <p className="text-gray-200 text-base leading-relaxed mb-6">

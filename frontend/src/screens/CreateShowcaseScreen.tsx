@@ -44,16 +44,17 @@ const CreateShowcaseScreen: React.FC = () => {
       };
 
       const { data } = await axios.post(
-        "/api/ai/generate",
-        { name: productName },
+        "/api/ai/generate-desc",
+        { productName },
         config,
       );
 
       handleItemChange(index, "desc", data.description || data);
     } catch (err: any) {
-      alert(
-        "Failed to generate description. Please check your connection or AI route.",
-      );
+      const status = err?.response?.status;
+      const message = err?.response?.data?.message || err?.message;
+      alert(`❌ Error ${status}: ${message}`);
+      console.error("Full error:", err);
     } finally {
       setGeneratingIndex(null);
     }

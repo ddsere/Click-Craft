@@ -31,12 +31,18 @@ const CartScreen: React.FC = () => {
     } else {
         navigate('/login?redirect=/shipping'); 
     }
-};
+  };
+
+  const parsePrice = (priceVal: any) => {
+    if (!priceVal) return 0;
+    const cleaned = String(priceVal).replace(/[^0-9.]/g, "");
+    const num = Number(cleaned);
+    return isNaN(num) ? 0 : num;
+  };
 
   const calculateTotal = () => {
     return cartItems.reduce((acc, item) => {
-      const priceNum = Number(item.price.replace(/[^0-9.-]+/g, ""));
-      return acc + priceNum * item.qty;
+      return acc + parsePrice(item.price) * item.qty;
     }, 0);
   };
 
@@ -84,7 +90,7 @@ const CartScreen: React.FC = () => {
                       {item.name}
                     </Link>
                     <p className="text-gray-600 font-semibold text-lg mt-1">
-                      {item.price}
+                      Rs. {parsePrice(item.price).toLocaleString()}
                     </p>
                   </div>
                 </div>
