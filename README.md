@@ -6,8 +6,8 @@ A modern, responsive, and secure Full-Stack Web Application designed for managin
 
 ## 🌐 Deployed URLs
 
-* **Live Frontend:** [Insert your Vercel URL here]
-* **Live Backend API:** [Insert your Render/Railway URL here]
+* **Live Frontend:** https://clickcraft-fe.vercel.app/
+* **Live Backend API:** https://clickcraft-be.vercel.app/
 
 ---
 
